@@ -41,7 +41,7 @@ sequenceDiagram
     participant G as Google server (:5000)
     participant D as Dashboard (:5000)
     B->>G: GET enterprise.js?render=recaptcha_key_for_linkedin
-    Note over G: Generate nonce; record script request and time
+    Note over G: Generate nonce and record script request and time
     G-->>B: Script configured with that nonce
     Note over B: Script creates a hidden iframe
     B->>G: GET /recaptcha/frame?nonce=tracking_correlation_nonce_UUID
