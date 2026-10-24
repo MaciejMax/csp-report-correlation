@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Telemetry Dashboard — CSP reports</title>
+<link rel="stylesheet" href="/assets/dashboard.css">
+</head>
+<body>
+<main>
+<header>
+  <div><h1>Google Telemetry Dashboard</h1><p>CSP reports from the local demo — received by the simulated Google collector.</p></div>
+  <div class="actions"><a class="button primary" href="http://localhost:4000" target="_blank" rel="noopener">Open demo ↗</a><button id="refresh" type="button">Refresh</button></div>
+</header>
+<section class="stats" aria-label="Summary">
+  <div class="stat"><strong id="scripts">0</strong><span>Script requests</span></div>
+  <div class="stat"><strong id="violations">0</strong><span>CSP reports received</span></div>
+</section>
+<section class="explanation" aria-labelledby="how-it-works">
+  <h2 id="how-it-works">How does it work?</h2>
+  <ol>
+    <li><strong>LinkedIn (port 4000) loads a reCAPTCHA script from Google (port 5000).</strong> The Google server records the serving time, client key, and HTTP referrer. A “Script served” event appears below.</li>
+    <li><strong>The script adds a hidden iframe containing a Google document.</strong> That document has the CSP rule <code>frame-ancestors 'self' localhost:5000</code>. The LinkedIn page on port 4000 has a different origin and is not allowed to embed it.</li>
+    <li><strong>The browser blocks the embedding and sends a report itself.</strong> The iframe document’s CSP header names the collector using <code>report-uri</code>. The page does not send this POST through JavaScript.</li>
+    <li><strong>The Google collector receives the report and displays it here.</strong> Each correlation card connects the script GET to its report POST. The elapsed time is measured between the two server-side events.</li>
+  </ol>
+  <p>Each script request gets a unique <code>tracking_correlation_nonce_…</code> token. The script passes it to the iframe, whose document includes it in the collector URL. This connects each report to a specific script request, even across multiple tabs.</p>
+  <p>Blocking the iframe is intentional. In the report, <code>disposition: "enforce"</code> means the policy was enforced; <code>violated-directive</code> identifies the rule. The <code>script-sample</code> field is normally empty here because the violation concerns document embedding, not a code fragment. LinkedIn and Google are simulated locally.</p>
+</section>
+<section class="panel" aria-labelledby="events-title">
+  <div class="panel-head"><div><h2 id="events-title">Scripts and correlated reports</h2><p>Each card groups events sharing a nonce: script GET, then report POST. Details are expanded by default.</p></div><button id="clear" type="button">Clear events</button></div>
+  <div id="events"><div class="empty"><strong>Waiting for data…</strong></div></div>
+</section>
+<footer><span id="status" role="status" aria-live="polite">Connecting…</span><br>Updates every 2 seconds. Times use your local time zone. Reports are correlated with scripts by their shared nonce.</footer>
+</main>
+<script src="/assets/dashboard.js" defer></script>
+</body>
+</html>

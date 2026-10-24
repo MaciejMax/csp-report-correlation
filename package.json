@@ -1,0 +1,14 @@
+{
+  "name": "csp-report-demo",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "A local demonstration of CSP violation reporting as a correlated telemetry signal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
